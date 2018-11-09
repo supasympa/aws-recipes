@@ -1,0 +1,47 @@
+{
+  "name": "aws-recipes",
+  "version": "1.0.0",
+  "description": "Recipes for working on AWS.",
+  "main": "/lib/index.ts",
+  "scripts": {
+    "prebuild": "rm -rf dist && mkdir dist",
+    "build": "parcel build ./src/index.ts --out-dir dist/",
+    "test": "mocha --opts ./mocha.opts ./spec/**/*.spec.ts",
+    "clean-install": "rm -rf ./node_modules && npm i",
+    "encrypt": "ts-node ./scripts/encrypt-all.ts",
+    "decrypt": "ts-node ./scripts/decrypt-all.ts",
+    "postpull": "npm run decrypt",
+    "precommit": "npm run encrypt"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/supasympa/aws-recipes.git"
+  },
+  "keywords": [
+    "Typescript",
+    "Javascript"
+  ],
+  "author": "Lewis Barclay",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/supasympa/aws-recipes/issues"
+  },
+  "homepage": "https://github.com/supasympa/aws-recipes#readme",
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.15",
+    "@types/chai": "4.1.7",
+    "@types/chai-as-promised": "7.1.0",
+    "@types/mocha": "5.2.5",
+    "@types/node": "10.12.3",
+    "aws-sdk": "2.350.0",
+    "chai": "4.2.0",
+    "chai-as-promised": "7.1.1",
+    "mocha": "5.2.0",
+    "parcel-bundler": "1.10.3",
+    "prettier": "1.14.3",
+    "prettier-tslint": "0.4.0",
+    "ts-node": "7.0.1",
+    "tslint": "5.11.0",
+    "typescript": "3.1.6"
+  }
+}
