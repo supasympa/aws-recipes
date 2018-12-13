@@ -2,7 +2,7 @@ import * as AWS from 'aws-sdk';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export const uploadDir = (s3Path: string, bucketName: string) => {
+export const uploadDirectoryToS3 = (filePath: string, bucketName: string) => {
 
     const s3 = new AWS.S3();
 
@@ -11,22 +11,22 @@ export const uploadDir = (s3Path: string, bucketName: string) => {
     }).promise()
         .then(() => {
 
-            function walkSync(currentDirPath: string, callback: (filePath: string, stat: any) => void) {
+            function syncFilesToS3Recursively(currentDirPath: string, callback: (filePath: string, stat: any) => void) {
                 fs.readdirSync(currentDirPath).forEach((name) =>  {
-                    const filePath = path.join(currentDirPath, name);
-                    const stat = fs.statSync(filePath);
+                    const fullFilePath = path.join(currentDirPath, name);
+                    const stat = fs.statSync(fullFilePath);
                     if (stat.isFile()) {
-                        callback(filePath, stat);
+                        callback(fullFilePath, stat);
                     } else if (stat.isDirectory()) {
-                        walkSync(filePath, callback);
+                        syncFilesToS3Recursively(fullFilePath, callback);
                     }
                 });
             }
 
-            walkSync(s3Path, (filePath) => {
-                const bucketPath = filePath.substring(s3Path.length + 1);
+            syncFilesToS3Recursively(filePath, (filePathToWalk) => {
+                const bucketPath = filePathToWalk.substring(filePathToWalk.length + 1);
                 const params = {
-                    Body: fs.readFileSync(filePath),
+                    Body: fs.readFileSync(filePathToWalk),
                     Bucket: bucketName,
                     Key: bucketPath,
                 };
@@ -41,4 +41,8 @@ export const uploadDir = (s3Path: string, bucketName: string) => {
         });
 };
 
-uploadDir(path.resolve(__dirname, '../../../scripts'), 'supasympa-foobarbaz');
+/*
+    example:
+
+    uploadDir(path.resolve(__dirname, '../../../scripts'), 'supasympa-foobarbaz');
+ */
